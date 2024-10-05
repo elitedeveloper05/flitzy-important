@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "dine_hub",
+    "sdkVersion": "51.0.0",
     "slug": "dine_hub",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,9 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
