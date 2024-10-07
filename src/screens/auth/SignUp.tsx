@@ -6,57 +6,34 @@ import {components} from '../../components';
 import {useAppNavigation} from '../../hooks';
 import {homeIndicatorHeight} from '../../utils';
 
-const SignUp: React.FC = (): JSX.Element => {
+const VendorSignUp: React.FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
   const [userName, setUserName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [isCustomer, setIsCustomer] = useState<boolean>(true); // State for toggling tabs
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [businessName, setBusinessName] = useState<string>('');
+  const [address, setAddress] = useState<string>('');
+  const [referralCode, setReferralCode] = useState<string>(''); // Optional referral code
 
   const inp1Ref = useRef<TextInput>(null);
   const inp2Ref = useRef<TextInput>(null);
   const inp3Ref = useRef<TextInput>(null);
   const inp4Ref = useRef<TextInput>(null);
+  const inp5Ref = useRef<TextInput>(null);
 
   const renderStatusBar = () => <components.StatusBar />;
-
   const renderHeader = () => <components.Header goBack={true} />;
 
   const renderMainText = () => (
     <Text style={{marginBottom: 30, fontSize: 24, fontWeight: 'bold'}}>
-      Sign up
+      Vendor Registration
     </Text>
-  );
-
-  const renderTab = () => (
-    <View style={styles.tabContainer}>
-      <TouchableOpacity
-        style={[
-          styles.tabButton,
-          isCustomer ? styles.activeTab : styles.inactiveTab,
-          isCustomer ? styles.activeTabBorder : {},
-        ]}
-        onPress={() => setIsCustomer(true)}
-      >
-        <Text style={styles.tabText}>Customer</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          styles.tabButton,
-          !isCustomer ? styles.activeTab : styles.inactiveTab,
-          !isCustomer ? styles.activeTabBorder : {},
-        ]}
-        onPress={() => setIsCustomer(false)}
-      >
-        <Text style={styles.tabText}>Vendor</Text>
-      </TouchableOpacity>
-    </View>
   );
 
   const renderInputFields = () => (
     <>
+      {/* Name Field */}
       <components.InputField
         type='username'
         innerRef={inp1Ref}
@@ -65,59 +42,71 @@ const SignUp: React.FC = (): JSX.Element => {
         containerStyle={{marginBottom: 14}}
         onChangeText={(text) => setUserName(text)}
       />
+
+      {/* Email Field */}
       <components.InputField
         type='email'
         value={email}
-        checkIcon={true}
         innerRef={inp2Ref}
         placeholder='youremail@example.com'
         containerStyle={{marginBottom: 14}}
         onChangeText={(text) => setEmail(text)}
       />
+
+      {/* Phone Number Field */}
       <components.InputField
-        type='password'
-        value={password}
-        eyeOffIcon={true}
+        type='phone'
+        value={phoneNumber}
         innerRef={inp3Ref}
-        placeholder='••••••••'
-        secureTextEntry={true}
+        placeholder='Phone Number'
         containerStyle={{marginBottom: 14}}
-        onChangeText={(text) => setPassword(text)}
+        onChangeText={(text) => setPhoneNumber(text)}
       />
+
+      {/* Business Name Field */}
       <components.InputField
-        type='password'
-        eyeOffIcon={true}
+        type='businessName'
         innerRef={inp4Ref}
-        value={confirmPassword}
-        placeholder='••••••••'
-        secureTextEntry={true}
+        value={businessName}
+        placeholder='Your Business Name'
         containerStyle={{marginBottom: 14}}
-        onChangeText={(text) => setConfirmPassword(text)}
+        onChangeText={(text) => setBusinessName(text)}
       />
-      {/* Additional field for Vendor */}
-      {!isCustomer && (
-        <components.InputField
-          type='businessName'
-          innerRef={null}
-          value={''} // Add state for business name if needed
-          placeholder='Your Business Name'
-          containerStyle={{marginBottom: 14}}
-          onChangeText={(text) => {}} // Handle change if needed
-        />
-      )}
+
+      {/* Address Field */}
+      <components.InputField
+        value={address}
+        innerRef={inp5Ref}
+        placeholder='Business Address'
+        containerStyle={{marginBottom: 14}}
+        onChangeText={(text) => setAddress(text)}
+      />
+
+      {/* Optional Referral Code Field */}
+      <components.InputField
+        value={referralCode}
+        placeholder='Referral Code (Optional)'
+        containerStyle={{marginBottom: 20}}
+        onChangeText={(text) => setReferralCode(text)}
+      />
     </>
   );
 
   const renderButton = () => (
     <components.Button
-      title='Sign up'
+      title='Register'
       containerStyle={{marginBottom: 20}}
       onPress={() => {
-        if (isCustomer) {
-          navigation.navigate('VerifyYourPhoneNumber', {userType: 'Customer'});
-        } else {
-          navigation.navigate('VerifyYourPhoneNumber', {userType: 'Vendor'});
-        }
+        console.log('Vendor Details Saved:', {
+          userName,
+          email,
+          phoneNumber,
+          businessName,
+          address,
+          referralCode,
+        });
+
+        //use navigation here
       }}
     />
   );
@@ -128,11 +117,13 @@ const SignUp: React.FC = (): JSX.Element => {
         {
           pattern: /Sign in./,
           style: {color: theme.colors.mainTurquoise},
-          onPress: () => navigation.replace('SignIn'),
+          onPress: () => navigation.navigate('SignIn'),
         },
       ]}
     >
-      <Text>Already have an account? Sign in.</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+        <Text>Already have an account? Sign in.</Text>
+      </TouchableOpacity>
     </components.ParsedText>
   );
 
@@ -151,7 +142,6 @@ const SignUp: React.FC = (): JSX.Element => {
     return (
       <components.KAScrollView contentContainerStyle={{...styles}}>
         {renderMainText()}
-        {renderTab()}
         {renderInputFields()}
         {renderButton()}
         {renderAlreadyHaveAccount()}
@@ -204,33 +194,4 @@ const SignUp: React.FC = (): JSX.Element => {
   );
 };
 
-const styles = {
-  tabContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
-  },
-  tabButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    flex: 1, // Use flex to distribute space evenly
-    alignItems: 'center', // Center the text
-    borderWidth: 2, // Set a default border width
-    borderColor: 'transparent', // Default to transparent
-  },
-  activeTab: {
-    backgroundColor: theme.colors.mainTurquoise,
-  },
-  inactiveTab: {
-    backgroundColor: theme.colors.lightGray,
-  },
-  activeTabBorder: {
-    borderColor: theme.colors.mainTurquoise, // Use the same color as active background
-  },
-  tabText: {
-    color: theme.colors.white,
-  },
-};
-
-export default SignUp;
+export default VendorSignUp;

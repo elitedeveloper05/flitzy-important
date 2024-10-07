@@ -5,6 +5,7 @@ import {Stack} from '../hooks';
 import {screens} from '../screens';
 import TabNavigator from './TabNavigator';
 import LocationScreen from '../screens/auth/LocationScreen'; // Ensure this import is correct
+import NewUserScreen from '../screens/auth/NewUserScreen';
 
 const StackNavigator: React.FC = () => {
   return (
@@ -130,6 +131,12 @@ const StackNavigator: React.FC = () => {
       <Stack.Screen
         name='LocationScreen'
         component={LocationScreen} // Use the imported LocationScreen directly
+        options={{headerShown: false}}
+      />
+
+      <Stack.Screen
+        name='NewUserScreen'
+        component={NewUserScreen} // Use the imported LocationScreen directly
         options={{headerShown: false}}
       />
     </Stack.Navigator>

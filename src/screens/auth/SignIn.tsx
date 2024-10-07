@@ -12,7 +12,9 @@ const SignIn: React.FC = (): JSX.Element => {
   const navigation = useAppNavigation();
 
   const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [otp, setOtp] = useState<string>('');
+  const [otpVisible, setOtpVisible] = useState<boolean>(false); // To control OTP field visibility
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   const renderStatusBar = () => {
@@ -24,38 +26,53 @@ const SignIn: React.FC = (): JSX.Element => {
   };
 
   const renderWelcome = () => {
-    return <text.H1 style={{marginBottom: 14}}>Welcome Back!</text.H1>;
+    return <text.H1 style={{marginBottom: 14}}>Welcome To Flitzy!</text.H1>;
   };
 
   const renderDescription = () => {
-    return <text.T16 style={{marginBottom: 30}}>Sign in to continue</text.T16>;
+    return (
+      <text.T16 style={{marginBottom: 30}}>
+        Enter your Phone number to continue
+      </text.T16>
+    );
   };
 
   const renderInputFields = () => {
     return (
       <React.Fragment>
-        <components.InputField
+        {/* <components.InputField
           type='email'
           value={email}
           checkIcon={true}
           placeholder='jordanhebert@mail.com'
           onChangeText={(text) => setEmail(text)}
           containerStyle={{marginBottom: 14}}
-        />
+        /> */}
+
+        {/* Phone Number Input Field */}
         <components.InputField
-          type='password'
-          value={password}
-          eyeOffIcon={true}
-          secureTextEntry={true}
-          placeholder='••••••••'
-          onChangeText={(text) => setPassword(text)}
-          containerStyle={{marginBottom: 20}}
+          type='phone'
+          value={phoneNumber}
+          placeholder='Phone Number'
+          onChangeText={(text) => setPhoneNumber(text)}
+          containerStyle={{marginBottom: 14}}
         />
+
+        {/* Conditionally Render OTP Field */}
+        {otpVisible && (
+          <components.InputField
+            type='number'
+            value={otp}
+            placeholder='Enter OTP'
+            onChangeText={(text) => setOtp(text)}
+            containerStyle={{marginBottom: 20}}
+          />
+        )}
       </React.Fragment>
     );
   };
 
-  const renderForgotPassword = () => {
+  const renderGetOtpLink = () => {
     const textStyles: TextStyle = {
       ...theme.fonts.textStyle_14,
       color: theme.colors.mainTurquoise,
@@ -63,10 +80,10 @@ const SignIn: React.FC = (): JSX.Element => {
 
     return (
       <Text
-        onPress={() => navigation.navigate('ForgotPassword')}
+        onPress={() => setOtpVisible(true)} // Show OTP field when clicked
         style={{...textStyles}}
       >
-        Forgot password?
+        Get OTP
       </Text>
     );
   };
@@ -115,7 +132,7 @@ const SignIn: React.FC = (): JSX.Element => {
     return (
       <View style={{...containerStyle}}>
         {renderRememberMe()}
-        {renderForgotPassword()}
+        {renderGetOtpLink()}
       </View>
     );
   };
@@ -147,10 +164,10 @@ const SignIn: React.FC = (): JSX.Element => {
   const renderButton = () => {
     return (
       <components.Button
-        title='Sign in'
+        title='Proceed'
         containerStyle={{marginBottom: 20}}
         onPress={() => {
-          navigation.navigate('LocationScreen');
+          navigation.navigate('NewUserScreen');
         }}
       />
     );
@@ -161,13 +178,13 @@ const SignIn: React.FC = (): JSX.Element => {
       <components.ParsedText
         parse={[
           {
-            pattern: /Sign up./,
+            pattern: /Sign up as Vendor./,
             style: {color: theme.colors.mainTurquoise},
             onPress: () => navigation.navigate('SignUp'),
           },
         ]}
       >
-        Don’t have an account? Sign up.
+        Want to Colloborate with us ?Sign up as Vendor.
       </components.ParsedText>
     );
   };

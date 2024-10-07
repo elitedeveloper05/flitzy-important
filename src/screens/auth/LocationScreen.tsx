@@ -1,4 +1,3 @@
-// LocationScreen.tsx
 import React, {useEffect, useState, useRef} from 'react';
 import {
   StyleSheet,
@@ -12,6 +11,7 @@ import MapView, {Marker, MapEvent, Region} from 'react-native-maps';
 import * as Location from 'expo-location';
 import {components} from '../../components';
 import {theme} from '../../constants';
+import {useAppNavigation} from '../../hooks'; // Import the navigation hook
 
 type LocationCoords = {
   latitude: number;
@@ -36,6 +36,7 @@ const LocationScreen: React.FC = (): JSX.Element => {
   });
 
   const mapRef = useRef<MapView>(null);
+  const navigation = useAppNavigation(); // Initialize the navigation hook
 
   useEffect(() => {
     (async () => {
@@ -156,6 +157,7 @@ const LocationScreen: React.FC = (): JSX.Element => {
           containerStyle={{marginTop: 20}}
           onPress={() => {
             console.log('Location Saved:', selectedLocation, addressDetails);
+            navigation.navigate('ForgotPassword'); // Navigate to Menulist on location save
           }}
         />
       </ScrollView>
