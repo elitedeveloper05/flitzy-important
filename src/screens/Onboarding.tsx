@@ -156,7 +156,7 @@ const Onboarding: React.FC = (): JSX.Element => {
           marginBottom: homeIndicatorHeight() === 0 ? 20 : 10,
         }}
         onPress={() => {
-          navigation.navigate('SignIn');
+          navigation.navigate('SignUp');
         }}
       />
     );
