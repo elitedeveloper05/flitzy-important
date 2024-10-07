@@ -150,7 +150,7 @@ const SignIn: React.FC = (): JSX.Element => {
         title='Sign in'
         containerStyle={{marginBottom: 20}}
         onPress={() => {
-          navigation.navigate('TabNavigator');
+          navigation.navigate('LocationScreen');
         }}
       />
     );

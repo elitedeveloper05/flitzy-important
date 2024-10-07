@@ -4,6 +4,7 @@ import React from 'react';
 import {Stack} from '../hooks';
 import {screens} from '../screens';
 import TabNavigator from './TabNavigator';
+import LocationScreen from '../screens/auth/LocationScreen'; // Ensure this import is correct
 
 const StackNavigator: React.FC = () => {
   return (
@@ -122,6 +123,13 @@ const StackNavigator: React.FC = () => {
       <Stack.Screen
         name='AddANewCard'
         component={screens.AddANewCard}
+        options={{headerShown: false}}
+      />
+
+      {/* Update this line to directly use the imported LocationScreen */}
+      <Stack.Screen
+        name='LocationScreen'
+        component={LocationScreen} // Use the imported LocationScreen directly
         options={{headerShown: false}}
       />
     </Stack.Navigator>
