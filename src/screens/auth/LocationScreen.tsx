@@ -1,3 +1,4 @@
+// LocationScreen.tsx
 import React, {useEffect, useState, useRef} from 'react';
 import {
   StyleSheet,
@@ -34,7 +35,6 @@ const LocationScreen: React.FC = (): JSX.Element => {
     landmark: '',
   });
 
-  // Create a ref for the MapView to control its region
   const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const LocationScreen: React.FC = (): JSX.Element => {
       const userCoords: LocationCoords = {
         latitude: userLocation.coords.latitude,
         longitude: userLocation.coords.longitude,
-        latitudeDelta: 0.01, // Adjust to your desired zoom level
+        latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       };
 
@@ -68,9 +68,8 @@ const LocationScreen: React.FC = (): JSX.Element => {
 
   const resetToUserLocation = async () => {
     if (originalLocation) {
-      // Animate the map to the user's current location smoothly
       if (mapRef.current) {
-        mapRef.current.animateToRegion(originalLocation, 1000); // 1000ms animation duration
+        mapRef.current.animateToRegion(originalLocation, 1000);
       }
       setSelectedLocation(originalLocation); // Reset marker to original location
     }
@@ -87,44 +86,37 @@ const LocationScreen: React.FC = (): JSX.Element => {
     <components.SmartView>
       <components.Header goBack={true} />
 
-      {/* App Name */}
       <Text style={styles.appName}>Flitzy</Text>
       <Text style={styles.locline}>Choose your Location</Text>
 
-      {/* Map Section */}
       <View style={styles.mapContainer}>
         {location && (
           <MapView
-            ref={mapRef} // Attach the ref to the MapView
+            ref={mapRef}
             style={styles.map}
             region={location as Region}
             onPress={handleMapPress}
           >
-            {/* Marker for the user's current location - conditionally rendered */}
-            {location &&
-              !selectedLocation && ( // Only show current location if no new location is selected
-                <Marker
-                  coordinate={{
-                    latitude: location.latitude,
-                    longitude: location.longitude,
-                  }}
-                  title='Your Location'
-                  pinColor={theme.colors.mainTurquoise} // Pin color from theme
-                />
-              )}
-
-            {/* Marker for the selected location */}
+            {location && !selectedLocation && (
+              <Marker
+                coordinate={{
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                }}
+                title='Your Location'
+                pinColor={theme.colors.mainTurquoise}
+              />
+            )}
             {selectedLocation && (
               <Marker
                 coordinate={selectedLocation}
                 title='Selected Location'
-                pinColor={theme.colors.mainTurquoise} // Pin color from theme
+                pinColor={theme.colors.mainTurquoise}
               />
             )}
           </MapView>
         )}
 
-        {/* User Location Icon */}
         <TouchableOpacity
           style={styles.locationIconContainer}
           onPress={resetToUserLocation}
@@ -133,38 +125,32 @@ const LocationScreen: React.FC = (): JSX.Element => {
         </TouchableOpacity>
       </View>
 
-      {/* Address Details Section */}
       <ScrollView contentContainerStyle={styles.formContainer}>
         <components.InputField
-          type='text'
           value={addressDetails.flatNo}
           placeholder='Flat No / Door No'
           onChangeText={(value) => handleInputChange('flatNo', value)}
           containerStyle={{marginBottom: 14}}
         />
         <components.InputField
-          type='text'
           value={addressDetails.street}
           placeholder='Street'
           onChangeText={(value) => handleInputChange('street', value)}
           containerStyle={{marginBottom: 14}}
         />
         <components.InputField
-          type='text'
           value={addressDetails.area}
           placeholder='Area'
           onChangeText={(value) => handleInputChange('area', value)}
           containerStyle={{marginBottom: 14}}
         />
         <components.InputField
-          type='text'
           value={addressDetails.landmark}
           placeholder='Landmark'
           onChangeText={(value) => handleInputChange('landmark', value)}
           containerStyle={{marginBottom: 14}}
         />
 
-        {/* Save Location Button */}
         <components.Button
           title='Save Location'
           containerStyle={{marginTop: 20}}
@@ -183,21 +169,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: theme.colors.mainTurquoise,
     textAlign: 'center',
-    // marginVertical: 10, // Add some spacing above and below the name
   },
   mapContainer: {
-    height: Dimensions.get('window').height * 0.4, // Map takes up 40% of the screen height
+    height: Dimensions.get('window').height * 0.4,
     borderBottomWidth: 1,
     borderColor: theme.colors.lightGray,
-    position: 'relative', // Ensure the location icon is positioned on top
+    position: 'relative',
   },
   map: {
     flex: 1,
   },
   locationIconContainer: {
     position: 'absolute',
-    bottom: 10, // Adjust to place the icon at the bottom right
-    right: 10, // Adjust to place the icon at the bottom right
+    bottom: 10,
+    right: 10,
     backgroundColor: theme.colors.white,
     padding: 10,
     borderRadius: 50,
@@ -208,7 +193,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   locationIconText: {
-    fontSize: 24, // Temporary text-based icon for now
+    fontSize: 24,
   },
   formContainer: {
     paddingHorizontal: 20,
@@ -216,11 +201,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
   },
   locline: {
-    fontSize: 29,
+    fontSize: 25,
     fontWeight: 'bold',
     color: theme.colors.mainTurquoise,
     textAlign: 'center',
-    // marginVertical: 10, // Add some spacing above and below the name
+    marginBottom: 10,
   },
 });
 
