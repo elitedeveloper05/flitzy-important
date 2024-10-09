@@ -7,6 +7,7 @@ import TabNavigator from './TabNavigator';
 import LocationScreen from '../screens/auth/LocationScreen'; // Ensure this import is correct
 import NewUserScreen from '../screens/auth/NewUserScreen';
 import Menulist from '../screens/Menulist';
+import Home from '../screens/tabs/Home';
 
 const StackNavigator: React.FC = () => {
   return (
@@ -144,6 +145,12 @@ const StackNavigator: React.FC = () => {
       <Stack.Screen
         name='AddANewAddress'
         component={screens.AddANewCard}
+        options={{headerShown: false}}
+      />
+
+      <Stack.Screen
+        name='Home'
+        component={screens.Home}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

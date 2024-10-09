@@ -161,7 +161,7 @@ const LocationScreen: React.FC = (): JSX.Element => {
           containerStyle={{marginTop: 20}}
           onPress={() => {
             console.log('Location Saved:', selectedLocation, addressDetails);
-            navigation.navigate('Menulist');
+            navigation.navigate('Home');
           }}
         />
       </ScrollView>

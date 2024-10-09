@@ -22,7 +22,7 @@ import {
 type Props = NativeStackScreenProps<RootStackParamList, 'Menulist'>;
 
 const Menulist: React.FC<Props> = ({route}): JSX.Element => {
-  const {category} = route.params;
+  const {category} = route?.params || {};
 
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(category || '');
