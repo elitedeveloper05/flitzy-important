@@ -97,14 +97,18 @@ const VendorSignUp: React.FC = (): JSX.Element => {
       title='Register'
       containerStyle={{marginBottom: 20}}
       onPress={() => {
-        console.log('Vendor Details Saved:', {
-          userName,
-          email,
-          phoneNumber,
-          businessName,
-          address,
-          referralCode,
-        });
+        console.log(
+          'Vendor Details Saved:',
+          {
+            userName,
+            email,
+            phoneNumber,
+            businessName,
+            address,
+            referralCode,
+          },
+          navigation.navigate('NewPassword'),
+        );
 
         //use navigation here
       }}

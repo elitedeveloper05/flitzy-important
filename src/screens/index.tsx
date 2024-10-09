@@ -1,7 +1,6 @@
 import Wallet from './Wallet';
 import Reviews from './Reviews';
 import Product from './Product';
-import Menulist from './Menulist';
 import Checkout from './Checkout';
 import SignIn from './auth/SignIn';
 import SignUp from './auth/SignUp';
@@ -20,6 +19,8 @@ import ConfirmationCode from './auth/ConfirmationCode';
 import SignUpaccountCreated from './auth/SignUpaccountCreated';
 import VerifyYourPhoneNumber from './auth/VerifyYourPhoneNumber';
 import ForgotPasswordSentEmail from './auth/ForgotPasswordSentEmail';
+import LocationScreen from './auth/LocationScreen';
+import Menulist from './Menulist';
 
 // Tabs
 import Home from './tabs/Home';
@@ -56,4 +57,5 @@ export const screens = {
   SignUpaccountCreated,
   VerifyYourPhoneNumber,
   ForgotPasswordSentEmail,
+  LocationScreen,
 };

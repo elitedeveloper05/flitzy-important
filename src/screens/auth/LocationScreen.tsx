@@ -13,6 +13,10 @@ import {components} from '../../components';
 import {theme} from '../../constants';
 import {useAppNavigation} from '../../hooks'; // Import the navigation hook
 
+import {text} from '../../text';
+import {svg} from '../../assets/svg';
+import {homeIndicatorHeight} from '../../utils';
+
 type LocationCoords = {
   latitude: number;
   longitude: number;
@@ -157,7 +161,7 @@ const LocationScreen: React.FC = (): JSX.Element => {
           containerStyle={{marginTop: 20}}
           onPress={() => {
             console.log('Location Saved:', selectedLocation, addressDetails);
-            navigation.navigate('ForgotPassword'); // Navigate to Menulist on location save
+            navigation.navigate('Menulist');
           }}
         />
       </ScrollView>
