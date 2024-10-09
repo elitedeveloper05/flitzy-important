@@ -1,164 +1,197 @@
-import React, {useState, useRef} from 'react';
-import {View, FlatList} from 'react-native';
+import React, {useState} from 'react';
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
-  responsiveWidth,
-  responsiveHeight,
-} from 'react-native-responsive-dimensions';
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  ScrollView,
+} from 'react-native';
 
 import {text} from '../text';
-import {components} from '../components';
-import {useAppNavigation} from '../hooks';
-import {homeIndicatorHeight} from '../utils';
+import {svg} from '../assets/svg';
 import {theme} from '../constants';
+import {components} from '../components';
+import type {RootStackParamList} from '../types';
+import {
+  useGetProductsQuery,
+  useGetCategoriesQuery,
+} from '../store/slices/apiSlice';
 
-const onboardingData = [
-  {
-    id: 1,
-    title: 'Embark on Culinary\nAdventures',
-    description: 'Embark on an exciting culinary\njourney with our app.',
-    image: 'https://george-fx.github.io/dine-hub/01.jpg',
-  },
-  {
-    id: 2,
-    title: 'Craft Your\nPerfect Order',
-    description: 'Customize your cravings and place\norders effortlessly.',
-    image: 'https://george-fx.github.io/dine-hub/02.jpg',
-  },
-  {
-    id: 3,
-    title: 'Taste the\nDelivered Magic',
-    description: 'Enjoy the convenience of doorstep\nculinary delights.',
-    image: 'https://george-fx.github.io/dine-hub/03.jpg',
-  },
-];
+type Props = NativeStackScreenProps<RootStackParamList, 'Menulist'>;
 
-const Onboarding: React.FC = (): JSX.Element => {
-  const navigation = useAppNavigation();
+const Menulist: React.FC<Props> = ({route}): JSX.Element => {
+  const {category} = route.params;
 
-  const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
-  const flatListRef = useRef<FlatList>(null);
+  const [loading, setLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(category || '');
 
-  const updateCurrentSlideIndex = (e: any) => {
-    const contentOffsetX = e.nativeEvent.contentOffset.x;
-    const currentIndex = Math.round(contentOffsetX / theme.sizes.width);
-    setCurrentSlideIndex(currentIndex);
-  };
+  const {
+    data: productsData,
+    error: productsError,
+    isLoading: productsLoading,
+  } = useGetProductsQuery();
+  const {
+    data: categoriesData,
+    error: categoriesError,
+    isLoading: categoriesLoading,
+  } = useGetCategoriesQuery();
+
+  const dishes = productsData instanceof Array ? productsData : [];
+  const categories = categoriesData instanceof Array ? categoriesData : [];
+
+  if (loading) {
+    return <components.Loader />;
+  }
 
   const renderStatusBar = () => {
-    return <components.StatusBar containerStyle={{marginBottom: 10}} />;
+    return <components.StatusBar />;
   };
 
-  const renderImage = () => {
+  const renderHeader = () => {
+    return <components.Header goBack={true} title='Menu' basket={true} />;
+  };
+
+  const renderSearchBar = () => {
+    return (
+      <View
+        style={{
+          marginTop: 10,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginHorizontal: 20,
+          height: 50,
+          marginBottom: 14,
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: theme.colors.white,
+            flex: 1,
+            borderRadius: 10,
+            marginRight: 5,
+            padding: 5,
+            flexDirection: 'row',
+            alignItems: 'center',
+            height: '100%',
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: theme.colors.mainTurquoise,
+              width: 40,
+              height: '100%',
+              borderRadius: 8,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: 14,
+            }}
+          >
+            <svg.SearchSvg />
+          </View>
+          <TextInput
+            placeholder='Search ...'
+            style={{
+              flex: 1,
+              ...theme.fonts.DMSans_400Regular,
+              fontSize: 16,
+              color: theme.colors.mainColor,
+            }}
+            placeholderTextColor={theme.colors.textColor}
+          />
+        </View>
+        <TouchableOpacity
+          style={{
+            backgroundColor: theme.colors.white,
+            borderRadius: 10,
+            height: 50,
+            width: 50,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <svg.FilterSvg />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderCategories = () => {
     return (
       <FlatList
-        data={onboardingData}
-        ref={flatListRef}
+        data={categories}
         horizontal={true}
-        pagingEnabled={true}
+        decelerationRate={0}
+        contentContainerStyle={{
+          paddingLeft: 20,
+          marginBottom: 20,
+        }}
+        style={{
+          flexGrow: 0,
+        }}
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={updateCurrentSlideIndex}
-        keyExtractor={(item, index) => index.toString()}
-        style={{flexGrow: 0}}
-        renderItem={({item}) => {
-          const width = responsiveWidth(100);
-          const height = responsiveHeight(43);
+        renderItem={({item, index}) => {
+          const last = index === categories.length - 1;
           return (
-            <View style={{width, height}}>
-              <components.Image
-                source={{uri: item.image}}
+            <TouchableOpacity
+              style={{
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                backgroundColor: theme.colors.white,
+                borderRadius: 10,
+                marginRight: last ? 20 : 8,
+                borderWidth: 1,
+                borderColor:
+                  selectedCategory === item.name
+                    ? theme.colors.mainTurquoise
+                    : theme.colors.white,
+              }}
+              onPress={() => {
+                setSelectedCategory(item.name);
+              }}
+            >
+              <text.H5
                 style={{
-                  width: width - 40,
-                  height: height,
-                  alignSelf: 'center',
+                  color:
+                    selectedCategory === item.name
+                      ? theme.colors.mainTurquoise
+                      : theme.colors.mainColor,
                 }}
-                resizeMode='contain'
-              />
-            </View>
+              >
+                {item.name}
+              </text.H5>
+            </TouchableOpacity>
           );
         }}
       />
     );
   };
 
-  const renderIndicator = () => {
+  const renderContent = () => {
+    const dishesByCategory = dishes?.filter((dish) => {
+      return dish.category?.includes(selectedCategory);
+    });
     return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignSelf: 'center',
-          alignItems: 'center',
-          marginTop: 20,
-          marginBottom: 30,
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 20,
         }}
+        showsVerticalScrollIndicator={false}
       >
-        {onboardingData.map((_, index) => {
+        {dishesByCategory?.map((item, index, array) => {
+          const lastItem = index === array.length - 1;
           return (
-            <View
-              key={index}
-              style={{
-                width: 8,
-                height: currentSlideIndex === index ? 20 : 8,
-                borderRadius: 4,
-                marginHorizontal: 4,
-                backgroundColor: theme.colors.mainTurquoise,
-                opacity: currentSlideIndex === index ? 1 : 0.3,
-              }}
+            <components.MenuListItem
+              item={item}
+              lastItem={lastItem}
+              key={item.id}
             />
           );
         })}
-      </View>
-    );
-  };
-
-  const renderDetails = () => {
-    return (
-      <View
-        style={{
-          backgroundColor: theme.colors.white,
-          flex: 1,
-          marginHorizontal: 20,
-          marginBottom: 20,
-          borderRadius: 10,
-          justifyContent: 'center',
-        }}
-      >
-        {onboardingData.map((item, index) => {
-          if (currentSlideIndex === index) {
-            return (
-              <View
-                key={index}
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginHorizontal: 20,
-                }}
-              >
-                <text.H1 style={{textAlign: 'center', marginBottom: 20}}>
-                  {item.title}
-                </text.H1>
-                <text.T16 style={{textAlign: 'center'}}>
-                  {item.description}
-                </text.T16>
-              </View>
-            );
-          }
-        })}
-      </View>
-    );
-  };
-
-  const renderButton = () => {
-    return (
-      <components.Button
-        title='Get Started'
-        containerStyle={{
-          marginHorizontal: 20,
-          marginBottom: homeIndicatorHeight() === 0 ? 20 : 10,
-        }}
-        onPress={() => {
-          navigation.navigate('Menulist');
-        }}
-      />
+      </ScrollView>
     );
   };
 
@@ -169,13 +202,13 @@ const Onboarding: React.FC = (): JSX.Element => {
   return (
     <components.SmartView>
       {renderStatusBar()}
-      {renderImage()}
-      {renderIndicator()}
-      {renderDetails()}
-      {renderButton()}
+      {renderHeader()}
+      {renderSearchBar()}
+      {renderCategories()}
+      {renderContent()}
       {renderHomeIndicator()}
     </components.SmartView>
   );
 };
 
-export default Onboarding;
+export default Menulist;
