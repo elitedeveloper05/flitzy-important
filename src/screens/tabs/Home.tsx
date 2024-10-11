@@ -60,12 +60,18 @@ const Home: React.FC = (): JSX.Element => {
   const renderCarousel = () => {
     return (
       <FlatList
-        data={productsData.slice(0, 5)} // Showing the first 5 items as carousel
+        data={productsData.slice(0, 5)}
         onMomentumScrollEnd={(e) => updateCurrentSlideIndex(e)}
         renderItem={({item}) => (
           <components.Image
             source={{uri: item.image}}
-            style={{width: theme.sizes.width, height: 250, aspectRatio: 1.5}}
+            style={{
+              width: theme.sizes.width,
+              height: 250,
+              aspectRatio: 1.5,
+              borderRadius: 10,
+              marginVertical: 10,
+            }}
           />
         )}
         pagingEnabled={true}
@@ -105,16 +111,16 @@ const Home: React.FC = (): JSX.Element => {
                   category: item.category,
                 });
               }}
+              style={{marginRight: 15}}
             >
               <components.ImageBackground
                 source={{uri: item.image}}
                 style={{
                   width: 90,
                   height: 90,
-                  paddingVertical: 10,
-                  paddingHorizontal: 15,
-                  marginRight: 10,
+                  padding: 10,
                   justifyContent: 'flex-end',
+                  borderRadius: 10,
                 }}
                 resizeMode='cover'
                 imageStyle={{borderRadius: 10}}
@@ -122,8 +128,9 @@ const Home: React.FC = (): JSX.Element => {
                 <Text
                   style={{
                     ...theme.fonts.DMSans_400Regular,
-                    fontSize: 10,
+                    fontSize: 12,
                     color: theme.colors.mainColor,
+                    textAlign: 'center',
                   }}
                 >
                   {item.category}
