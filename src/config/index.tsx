@@ -2,7 +2,7 @@ import {ENDPOINTS} from './endpoints';
 
 const DEBUG = true;
 // const BASE_URL = 'http://127.0.0.1:8000/';
-const BASE_URL = 'https://dine-hub.rn-admin.site/';
+const BASE_URL = 'https://fakestoreapi.com/';
 const AUTHORIZATION_TOKEN = 'aH3KCew1YsWhWqW0tqNU3ndzHb3RdblI';
 
 const CONFIG = {

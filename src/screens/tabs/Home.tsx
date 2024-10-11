@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, FlatList, ScrollView, TouchableOpacity} from 'react-native';
 import {responsiveWidth} from 'react-native-responsive-dimensions';
 
@@ -8,38 +8,31 @@ import {useAppNavigation} from '../../hooks';
 import {theme, reviews} from '../../constants';
 import {setScreen} from '../../store/slices/tabSlice';
 import BottomTabBar from '../../navigation/BottomTabBar';
-import {
-  useGetProductsQuery,
-  useGetCarouselQuery,
-  useGetCategoriesQuery,
-} from '../../store/slices/apiSlice';
 
 const Home: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const navigation = useAppNavigation();
 
-  const {
-    data: carouselData,
-    error: carouselError,
-    isLoading: carouselLoading,
-  } = useGetCarouselQuery();
+  const [productsData, setProductsData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const {
-    data: categoriesData,
-    error: categoriesError,
-    isLoading: categoriesLoading,
-  } = useGetCategoriesQuery();
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('https://fakestoreapi.com/products');
+        const data = await response.json();
+        setProductsData(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+        setIsLoading(false);
+      }
+    };
 
-  const {
-    data: productsData,
-    error: productsError,
-    isLoading: productsLoading,
-  } = useGetProductsQuery();
+    fetchProducts();
+  }, []);
 
-  const dishes = productsData instanceof Array ? productsData : [];
-  const carousel = carouselData instanceof Array ? carouselData : [];
-  const categories = categoriesData instanceof Array ? categoriesData : [];
-  const recommended = dishes?.filter((e) => e.is_recommended) ?? [];
+  const recommended = productsData?.filter((e) => e.rating?.rate >= 4) ?? [];
 
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
 
@@ -65,143 +58,82 @@ const Home: React.FC = (): JSX.Element => {
   };
 
   const renderCarousel = () => {
-    const renderCarouselImages = () => {
-      return (
-        <FlatList
-          data={carousel}
-          onMomentumScrollEnd={(e) => updateCurrentSlideIndex(e)}
-          renderItem={({item}) => (
-            <components.Image
-              source={{uri: item.image}}
-              style={{width: theme.sizes.width, height: 250, aspectRatio: 1.5}}
-            />
-          )}
-          pagingEnabled={true}
-          keyExtractor={(item) => item.id}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={16}
-          decelerationRate={0}
-          bounces={false}
-          alwaysBounceHorizontal={false}
-        />
-      );
-    };
-
-    const renderIndicator = () => {
-      if (carousel.length > 1) {
-        return (
-          <View
-            style={{
-              height: 24,
-              justifyContent: 'center',
-              alignItems: 'center',
-              position: 'absolute',
-              bottom: 20,
-              flexDirection: 'row',
-              alignSelf: 'center',
-            }}
-          >
-            {carousel.map((image, index, array) => {
-              return (
-                <View
-                  key={index}
-                  style={{
-                    width: 8,
-                    height: currentSlideIndex === index ? 20 : 8,
-                    borderRadius: 8 / 2,
-                    backgroundColor: theme.colors.white,
-                    opacity: currentSlideIndex === index ? 1 : 0.5,
-                    borderColor:
-                      currentSlideIndex === index
-                        ? theme.colors.mainColor
-                        : '#DBE9F5',
-                    marginHorizontal: 4,
-                  }}
-                />
-              );
-            })}
-          </View>
-        );
-      }
-      return null;
-    };
-
-    if (carousel.length > 0) {
-      return (
-        <View style={{marginBottom: 30}}>
-          {renderCarouselImages()}
-          {renderIndicator()}
-        </View>
-      );
-    }
-
-    if (carousel.length === 0) {
-      return null;
-    }
+    return (
+      <FlatList
+        data={productsData.slice(0, 5)} // Showing the first 5 items as carousel
+        onMomentumScrollEnd={(e) => updateCurrentSlideIndex(e)}
+        renderItem={({item}) => (
+          <components.Image
+            source={{uri: item.image}}
+            style={{width: theme.sizes.width, height: 250, aspectRatio: 1.5}}
+          />
+        )}
+        pagingEnabled={true}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        scrollEventThrottle={16}
+        decelerationRate={0}
+        bounces={false}
+        alwaysBounceHorizontal={false}
+      />
+    );
   };
 
   const renderCategories = () => {
-    if (categories.length > 0) {
-      return (
-        <View style={{marginBottom: 30}}>
-          <components.BlockHeading
-            title='We offer'
-            onPress={() => {
-              dispatch(setScreen('Menu'));
-            }}
-            containerStyle={{marginHorizontal: 20, marginBottom: 14}}
-          />
-          <FlatList
-            data={categories}
-            horizontal={true}
-            contentContainerStyle={{paddingLeft: 20}}
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
-            pagingEnabled={true}
-            decelerationRate={0}
-            renderItem={({item}) => {
-              const lastItem = categories[categories.length - 1];
-              return (
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('Menulist', {
-                      category: item.name,
-                    });
+    return (
+      <View style={{marginBottom: 30}}>
+        <components.BlockHeading
+          title='We offer'
+          onPress={() => {
+            dispatch(setScreen('Menu'));
+          }}
+          containerStyle={{marginHorizontal: 20, marginBottom: 14}}
+        />
+        <FlatList
+          data={productsData}
+          horizontal={true}
+          contentContainerStyle={{paddingLeft: 20}}
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id.toString()}
+          pagingEnabled={true}
+          decelerationRate={0}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('Menulist', {
+                  category: item.category,
+                });
+              }}
+            >
+              <components.ImageBackground
+                source={{uri: item.image}}
+                style={{
+                  width: 90,
+                  height: 90,
+                  paddingVertical: 10,
+                  paddingHorizontal: 15,
+                  marginRight: 10,
+                  justifyContent: 'flex-end',
+                }}
+                resizeMode='cover'
+                imageStyle={{borderRadius: 10}}
+              >
+                <Text
+                  style={{
+                    ...theme.fonts.DMSans_400Regular,
+                    fontSize: 10,
+                    color: theme.colors.mainColor,
                   }}
                 >
-                  <components.ImageBackground
-                    source={{uri: item.image}}
-                    style={{
-                      width: 90,
-                      height: 90,
-                      paddingVertical: 10,
-                      paddingHorizontal: 15,
-                      marginRight: item.id === lastItem.id ? 20 : 10,
-                      justifyContent: 'flex-end',
-                    }}
-                    resizeMode='cover'
-                    imageStyle={{borderRadius: 10}}
-                  >
-                    <Text
-                      style={{
-                        ...theme.fonts.DMSans_400Regular,
-                        fontSize: 10,
-                        color: theme.colors.mainColor,
-                      }}
-                    >
-                      {item.name}
-                    </Text>
-                  </components.ImageBackground>
-                </TouchableOpacity>
-              );
-            }}
-          />
-        </View>
-      );
-    }
-
-    return null;
+                  {item.category}
+                </Text>
+              </components.ImageBackground>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    );
   };
 
   const renderRecommended = () => {
@@ -219,7 +151,7 @@ const Home: React.FC = (): JSX.Element => {
             horizontal={true}
             contentContainerStyle={{paddingLeft: 20}}
             showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             pagingEnabled={true}
             snapToInterval={theme.sizes.width - responsiveWidth(44.2)}
             decelerationRate={0}
@@ -234,9 +166,7 @@ const Home: React.FC = (): JSX.Element => {
       );
     }
 
-    if (recommended.length === 0) {
-      return null;
-    }
+    return null;
   };
 
   const renderReviews = () => {
@@ -270,7 +200,7 @@ const Home: React.FC = (): JSX.Element => {
   };
 
   const renderContent = () => {
-    if (carouselLoading || categoriesLoading || productsLoading) {
+    if (isLoading) {
       return <components.Loader />;
     }
     return (
